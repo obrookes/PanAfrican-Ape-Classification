@@ -50,10 +50,6 @@ class EnsembleModel(pl.LightningModule):
                 checkpoint = torch.load(self.checkpoint, map_location=lambda storage, loc: storage)
             
             start_epoch = checkpoint['epoch'] if 'epoch' in checkpoint else 0
-            best_prec1 = checkpoint['best_prec1'] if 'best_prec1' in checkpoint else 0
-            best_prec3 = checkpoint['best_prec3'] if 'best_prec3' in checkpoint else 0
-            best_prec5 = checkpoint['best_prec5'] if 'best_prec5' in checkpoint else 0
-
             state_dict = checkpoint['state_dict']
             classnames = checkpoint['classnames']
             model_type = checkpoint['model_type']
@@ -77,19 +73,11 @@ class EnsembleModel(pl.LightningModule):
                 #print("%s" % (k))
 
             model_dict = new_state_dict        
-            optimizer_dict = checkpoint['optimizer'] if 'optimizer' in checkpoint else None
 
             print("=> loaded checkpoint '{}' (epoch {})"
                     .format(self.checkpoint, start_epoch))
 
-            data.best_prec1 = best_prec1
-            data.best_prec3 = best_prec3
-            data.best_prec5 = best_prec5
-            data.start_epoch = start_epoch
-            data.classnames = classnames
             data.model_dict = model_dict
-            data.optimizer_dict = optimizer_dict
-            data.model_type = model_type
 
             self.load_state_dict(data.model_dict)
             print('Loaded state_dict succesfully!')
